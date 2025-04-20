@@ -1,9 +1,4 @@
-import streamlit as st
-import requests
-import pandas as pd
-import sqlitecloud
-from altres.variables import cami_db
-import openpyxl
+from altres.imports import *
 
 
 st.set_page_config(layout="wide")
