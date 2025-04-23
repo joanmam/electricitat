@@ -16,7 +16,10 @@ if uploaded_file:
     st.write("Dades carregades:", df.head())
 
     # Crear la taula SQL
+
     table_name = "Fusion_per_dia"
+    conn.execute(f"DROP TABLE {table_name}")
     df.to_sql(table_name, con=conn, if_exists="replace", index=False)
 
     st.success(f"Taula '{table_name}' creada correctament a SQLiteCloud!")
+
