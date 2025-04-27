@@ -7,7 +7,7 @@ cursor = conn.cursor()
 
 
 # Executar la consulta per obtenir les dades de la taula
-query = "SELECT StatisticalPeriod, PVYield, Consumption, Selfconsumption, Export, Import, SelfConsumptionRate FROM Fusion_per_dia"
+query = "SELECT StatisticalPeriod, PVYield, Consumption, Charge, Discharge, Selfconsumption, Export, Import, SelfConsumptionRate FROM Fusion_per_dia"
 df = pd.read_sql(query, conn)
 
 
@@ -17,11 +17,13 @@ df["StatisticalPeriod"] = df["StatisticalPeriod"].str.replace(" DST", "", regex=
 
 # Convertir la columna a format datetime (data + hora)
 df["StatisticalPeriod"] = pd.to_datetime(df["StatisticalPeriod"], format="%Y-%m-%d")
-
+df["Prod_Autoconsum"] = df["Consumption"] - df["Import"] - df["Discharge"] + df["Charge"]
+df["Consum_FV1"] = df["Consumption"] - df["Import"]
+df["Consum_FV2"] = df["Prod_Autoconsum"] + df["Discharge"] - df["Charge"]
 
 # Crear gráfico con dos variables en el eje Y
-fig1 = px.line(df, x="StatisticalPeriod", y=["PVYield", "Consumption", "Export", "Import"],
-              title="PVYield, Consumo y Export vs StatisticalPeriod",
+fig1 = px.line(df, x="StatisticalPeriod", y=["Consumption", "Export", "Import", "Prod_Autoconsum", "Consum_FV1"],
+              title="Varies vs StatisticalPeriod",
               markers=True, template="plotly_white")
 
 
