@@ -40,41 +40,43 @@ elif fitxer1:  # Si només s'ha pujat fitxer1
 else:
     st.warning("Si us plau, puja almenys un fitxer per continuar.")
 
-columnas_a_eliminar = [
-        'Total String Capacity (kWp)',
-        'Global Irradiation (kWh/㎡)',
-        'Theoretical Yield (kWh)',
-        'Total Yield (kWh)',
-        'Specific Energy (kWh/kWp)',
-        'Loss Due to Export Limitation (kWh)',
-        'Loss Due to Export Limitation(€)',
-        'Peak Power (kW)',
-        'Performance Ratio(%)',
-        'CO₂ Avoided (t)',
-        'Standard Coal Saved (t)',
-        'Revenue (€)']
+if st.button("Actualitzar"):
 
-df_final.drop(columns=columnas_a_eliminar, inplace = True)
+    columnas_a_eliminar = [
+            'Total String Capacity (kWp)',
+            'Global Irradiation (kWh/㎡)',
+            'Theoretical Yield (kWh)',
+            'Total Yield (kWh)',
+            'Specific Energy (kWh/kWp)',
+            'Loss Due to Export Limitation (kWh)',
+            'Loss Due to Export Limitation(€)',
+            'Peak Power (kW)',
+            'Performance Ratio(%)',
+            'CO₂ Avoided (t)',
+            'Standard Coal Saved (t)',
+            'Revenue (€)']
+
+    df_final.drop(columns=columnas_a_eliminar, inplace = True)
 
 
 
-# Modificar los encabezados para dejar solo el texto antes del delimitador ":"
-df_final.columns = df_final.columns.astype(str).str.split('(').str[0]
+    # Modificar los encabezados para dejar solo el texto antes del delimitador ":"
+    df_final.columns = df_final.columns.astype(str).str.split('(').str[0]
 
-df_final.columns = df_final.columns.str.replace('-', '').str.replace(' ', '')
+    df_final.columns = df_final.columns.str.replace('-', '').str.replace(' ', '')
 
-df_final["StatisticalPeriod"] = pd.to_datetime(df_final["StatisticalPeriod"], format="%Y-%m-%d")
-df_filtrat = df_final[df_final["StatisticalPeriod"] > penultima_data]
-df_filtrat["StatisticalPeriod"] = df_filtrat["StatisticalPeriod"].dt.strftime('%Y-%m-%d')  # Format personalitzat
-st.write("el filtrat es")
-st.write(df_filtrat)
+    df_final["StatisticalPeriod"] = pd.to_datetime(df_final["StatisticalPeriod"], format="%Y-%m-%d")
+    df_filtrat = df_final[df_final["StatisticalPeriod"] > penultima_data]
+    df_filtrat["StatisticalPeriod"] = df_filtrat["StatisticalPeriod"].dt.strftime('%Y-%m-%d')  # Format personalitzat
+    st.write("el filtrat es")
+    st.write(df_filtrat)
 
-cursor.executemany(
-    "INSERT INTO Fusion_per_dia (StatisticalPeriod, PVYield, InverterYield, Export,"
-    "Import, Consumption, Selfconsumption, SelfconsumptionRate,"
-    "Charge, Discharge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    df_filtrat.values.tolist()
-)
+    cursor.executemany(
+        "INSERT INTO Fusion_per_dia (StatisticalPeriod, PVYield, InverterYield, Export,"
+        "Import, Consumption, Selfconsumption, SelfconsumptionRate,"
+        "Charge, Discharge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        df_filtrat.values.tolist()
+    )
 
-st.success("Les dades s'han pujat")
-conn.commit()
+    st.success("Les dades s'han pujat")
+    conn.commit()
