@@ -8,13 +8,13 @@ cursor = conn.cursor()
 
 
 
-unio = st.radio(
-    "Que vols fer?",
-    ["Unir", "No unir"],
-)
-
-if unio == "Unir":
-    st.write("Unir")
-else:
-    st.write("No unir")
-    st.switch_page("pages/electricitat.py")
+# unio = st.radio(
+#     "Que vols fer?",
+#     ["Unir", "No unir"],
+# )
+#
+# if unio == "Unir":
+#     st.write("Unir")
+# else:
+#     st.write("No unir")
+#     st.switch_page("pages/electricitat.py")
